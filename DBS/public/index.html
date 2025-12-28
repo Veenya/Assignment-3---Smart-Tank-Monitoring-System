@@ -1,0 +1,122 @@
+<!--
+*********************************************************************************
+Dashboard Substystem (DBS) PC/Frontend
+Frontend/web app, running on the PC or any device
+for remote operators to visualise data and interact with the system.
+It interacts via HTTP with the Control Unit Subsystem.
+*********************************************************************************
+
+The system is meant to monitor the rainwater level inside the tank, and -
+depending on values - controlling the opening of a water channel connecting the tank to a network of water channers.
+The overall system can be in two different modes: AUTOMATIC or MANUAL. In AUTOMATIC mode,
+the system automatically controls the opening of the water channel, depending on the current rainwater level in the tank.
+In MANUAL mode, the opening is controlled manually by an operator. The starting mode when booting is AUTOMATIC.
+
+The DBS subsystem is a dashboard for visualising the state of the Tank Monitoring system, including:
+- A graph of the rainwater level, considering the last N measurements.
+- The current value of the valve opening percentage.
+- The state of the system: MANUAL, AUTOMATIC, UNCONNECTED or NOT AVAILABLE.
+  - the state is labelled as NOT AVAILABLE when the CUS is not reachable, for any reason.
+
+Besides, it includes:
+- a GUI button to switch the modality (MANUAL, AUTOMATIC).
+- a GUI widget to control the opening level of the valve in the WCS (when in MANUAL mode).
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Smart Tank Dashboard</title>
+
+  <link rel="stylesheet" href="../src/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <div>
+        <h1>Smart Tank Monitoring</h1>
+        <div class="sub">Dashboard subsystem (DBS)</div>
+      </div>
+      <div id="statusBadge" class="badge badgeNA">NOT AVAILABLE</div>
+    </header>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Current status</h2>
+
+        <div class="row">
+          <div class="label">Tank level</div>
+          <div class="value"><span id="levelValue">—</span> cm</div>
+        </div>
+
+        <div class="row">
+          <div class="label">Valve opening</div>
+          <div class="value"><span id="valveValue">—</span>%</div>
+        </div>
+
+        <div class="row">
+          <div class="label">Last update</div>
+          <div class="value" id="lastUpdate">—</div>
+        </div>
+
+        <div class="row">
+          <div class="label">CUS base URL</div>
+          <div class="value"><span id="cusUrlLabel">—</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Controls</h2>
+
+        <div class="controls">
+          <button id="btnAuto" class="btn">Set AUTOMATIC</button>
+          <button id="btnManual" class="btn">Set MANUAL</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="sliderBlock">
+          <div class="row">
+            <div class="label">Manual valve</div>
+            <div class="value"><span id="manualValveLabel">0</span>%</div>
+          </div>
+
+          <input id="valveSlider" type="range" min="0" max="100" value="0" />
+          <div class="controls">
+            <button id="btnSendValve" class="btn btnPrimary">Send valve</button>
+            <button id="btnRefresh" class="btn">Refresh now</button>
+          </div>
+
+          <div class="hint" id="manualHint">Enabled only in MANUAL mode.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="chartHeader">
+        <h2>Tank level (last N measurements)</h2>
+        <div class="toolbar">
+          <label>
+            N:
+            <input id="nInput" type="number" min="10" max="500" value="50" />
+          </label>
+        </div>
+      </div>
+
+      <canvas id="levelChart"></canvas>
+    </section>
+
+    <footer class="footer">
+      <small>
+        State is shown as <b>NOT AVAILABLE</b> when the CUS cannot be reached.
+        Manual valve control is enabled only in <b>MANUAL</b> mode.
+      </small>
+    </footer>
+  </div>
+
+  <script type="module" src="../src/app.js"></script>
+</body>
+</html>
