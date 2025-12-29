@@ -11,14 +11,14 @@ class HWPlatform {
     public:
         HWPlatform();
         void init();
-        voit test();
+        void test();
 
         ServoMotor* getValve();
         LiquidCrystal_I2C* getLcd();
         ButtonImpl* getButton();
     private:
         ServoMotor* pValve;
-        LiquidCrystal_I2C pLcd;
+        LiquidCrystal_I2C* pLcd;
         ButtonImpl* pButton;
 };
 
