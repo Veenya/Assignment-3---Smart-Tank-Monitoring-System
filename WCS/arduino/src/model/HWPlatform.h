@@ -7,6 +7,12 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
+/*
+ * Class for hardware handling. It deals with:
+ * - Hardware components
+ * - Testing Hardware
+*/
+
 class HWPlatform {
     public:
         HWPlatform();
