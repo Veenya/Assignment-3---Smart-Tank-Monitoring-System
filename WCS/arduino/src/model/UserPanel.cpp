@@ -23,3 +23,53 @@ void UserPanel::init() {
   pLcd->noDisplay();
   turnOnDisplay();
 }
+
+void UserPanel::turnOnDisplay(){
+  pLcd->display();
+  pLcd->clear();
+}
+
+void UserPanel::turnOffDisplay(){
+  pLcd->noDisplay();
+}
+
+void UserPanel::displayManual() {
+    pLcd->clear();
+    pLcd->setCursor(0, 0); 
+    pLcd->print("MANUAL");
+}
+
+void UserPanel::displayAutomatic() {
+    pLcd->clear();
+    pLcd->setCursor(0, 0); 
+    pLcd->print("AUTOMATIC");
+}
+
+void UserPanel::displayUnconnected() {
+    pLcd->clear();
+    pLcd->setCursor(0, 0); 
+    pLcd->print("UNCONNECTED");
+}
+
+void UserPanel::displayNotAvailable() {
+    pLcd->clear();
+    pLcd->setCursor(0, 0); 
+    pLcd->print("NOT AVAILABLE");
+}
+
+void UserPanel::sync() {
+  if (!pButton) {
+    return;
+  }
+  prevButtonPressed = buttonPressed;
+  buttonPressed = pButton->isPressed();
+}
+
+bool UserPanel::isButtonPressed() const {
+  return buttonPressed; 
+}
+
+bool UserPanel::isButtonPressedEdge() {
+  // fronte di salita: ora premuto, prima no
+  return (buttonPressed && !prevButtonPressed);
+}
