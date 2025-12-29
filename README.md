@@ -111,3 +111,75 @@ For any aspect not specified, you are free to choose the approach you consider m
 The deliverable consists in a zipped folder assignment-03.zip including 4 subdirectories - one for each subsystem: `tms`,`cus`, `wcs`,`DBS`) - and a `doc` subdirectory, including the report. The report must be in PDF or MD (`report.pdf` or `report.md`) must include a high-level description of the behaviour of subsystems (using FSMs), a representation of the schema/breadboard and the link to a short video demonstrating the system.
 
 
+---
+
+assignment-03/
+├─ tms/                       # ESP32 project
+│  ├─ src/
+│  │  ├─ main.cpp
+│  │  ├─ fsm.h
+│  │  ├─ fsm.cpp
+│  │  ├─ sonar.h
+│  │  ├─ sonar.cpp
+│  │  ├─ leds.h
+│  │  ├─ leds.cpp
+│  │  ├─ mqtt_client.h
+│  │  └─ mqtt_client.cpp
+│  ├─ include/                # optional (PlatformIO style)
+│  ├─ lib/                    # optional
+│  ├─ platformio.ini          # if using PlatformIO
+│  └─ README.md               # how to flash + wiring
+│
+├─ wcs/                       # Arduino UNO project
+│  ├─ src/
+│  │  ├─ main.ino             # or wcs.ino
+│  │  ├─ fsm.h
+│  │  ├─ fsm.cpp
+│  │  ├─ serial_proto.h
+│  │  ├─ serial_proto.cpp
+│  │  ├─ valve_servo.h
+│  │  ├─ valve_servo.cpp
+│  │  ├─ ui_lcd.h
+│  │  ├─ ui_lcd.cpp
+│  │  ├─ button.h
+│  │  ├─ button.cpp
+│  │  ├─ pot.h
+│  │  └─ pot.cpp
+│  └─ README.md               # wiring + how to upload
+│
+├─ cus/                       # PC backend/server
+│  ├─ src/
+│  │  ├─ main.py              # starts MQTT + serial + HTTP
+│  │  ├─ config.py
+│  │  ├─ state_store.py        # holds mode/state/valve/levels
+│  │  ├─ mqtt_handler.py
+│  │  ├─ serial_handler.py
+│  │  ├─ policy_fsm.py         # AUTOMATIC/MANUAL/UNCONNECTED logic
+│  │  └─ http_api.py           # REST endpoints
+│  ├─ requirements.txt
+│  ├─ config.json              # L1,L2,T1,T2,F,N, ports, topics...
+│  └─ README.md                # how to run
+│
+├─ dbs/                       # Dashboard (web app)
+│  ├─ public/
+│  │  └─ index.html
+│  ├─ src/
+│  │  ├─ app.js                # UI logic
+│  │  ├─ api.js                # calls CUS endpoints
+│  │  ├─ chart.js              # graph component
+│  │  └─ styles.css
+│  ├─ package.json             # if using Node tooling
+│  └─ README.md                # how to run
+│
+└─ doc/
+   ├─ report.md                # or report.pdf
+   ├─ fsm/
+   │  ├─ tms_fsm.png
+   │  ├─ wcs_fsm.png
+   │  └─ cus_fsm.png
+   ├─ wiring/
+   │  ├─ tms_wiring.png
+   │  └─ wcs_wiring.png
+   └─ video_link.txt
+
+
