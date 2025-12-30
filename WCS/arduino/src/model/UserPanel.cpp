@@ -1,13 +1,13 @@
 #include "UserPanel.h"
-#include "Arduino.h" //TODO: maybe remove?
-#include "config.h" //TODO: maybe remove?
+#include "Arduino.h" //TODO: maybe remove
+#include "config.h" //TODO: maybe remove
 
 UserPanel::UserPanel(HWPlatform* pHW) {
     this->pHW = pHW;
     pButton = nullptr;
     pLcd = nullptr;
-    buttonPressed = false; //! maybe remove?
-    prevButtonPressed = false; //! maybe remove?
+    buttonPressed = false; 
+    prevButtonPressed = false; 
 
     if (pHW) {
         pButton = pHW->getButton();

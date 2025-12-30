@@ -10,6 +10,7 @@ HWPlatform::HWPlatform() {
     pValve = new ServoMotorImpl(SERVO_PIN);
     pLcd = new LiquidCrystal_I2C(LCD_ADDR, LCD_COLS, LCD_ROWS);
     pButton = new ButtonImpl(BUTTON_PIN);
+    pPot = new Potentiometer(POT_PIN);
     Serial.println("HWPlatform instantiated");
 }
 
@@ -35,8 +36,13 @@ ButtonImpl* HWPlatform::getButton() {
     return this->pButton;
 }
 
-// --- HW Test ---
+Potentiometer* HWPlatform::getPot() {
+    return this->pPot;
+}
 
+// --- HW Test ---
+// TODO: Add potentiometer tests inside test() function
+//! Test is missing Potentiometer test
 void HWPlatform::test() {
     Serial.println(F("[HW TEST] Starting..."));
 

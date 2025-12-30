@@ -4,6 +4,7 @@
 // ----- PINS -----
 #define BUTTON_PIN 4
 #define SERVO_PIN 2
+#define POT_PIN A0
 
 #define ANGLE_OPEN 10     // Angle to close valve with Servo
 #define ANGLE_CLOSED 90   // Angle to open valve with Servo
