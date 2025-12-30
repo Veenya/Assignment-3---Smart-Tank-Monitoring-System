@@ -27,11 +27,14 @@ void Valve::init() {
     //TankMode tankMode;
     //tankMode = TankMode::AUTOMATIC;
     // Check CUS info, based on that open the valve
-
+    waterLevel = getWaterLevel();
     
     // The opening depends on the CUS system
-    //WaterLevel waterLevel;
-    //waterLevel = getWaterLevel();
+    // Change based on state
+    // ! wrogng
+    if(manual && !unconnected && !not_available) {
+        setValveOpening(degrees);
+    }
 
     /*
     If button is pressed, we change mode...
