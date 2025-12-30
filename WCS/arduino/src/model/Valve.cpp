@@ -15,17 +15,20 @@ Valve::Valve(HWPlatform* pHW) {
     //! and other hardware
     this->tankMode = TankMode::AUTOMATIC;
     this->degrees = 0;
+
     this->waterLevel = getWaterLevel();
+
 }
 
 void Valve::init() {
     // We start off automatic
-    automatic = true;
+    setAutomatic();
 
     //TankMode tankMode;
     //tankMode = TankMode::AUTOMATIC;
     // Check CUS info, based on that open the valve
 
+    
     // The opening depends on the CUS system
     //WaterLevel waterLevel;
     //waterLevel = getWaterLevel();
@@ -42,11 +45,35 @@ void Valve::sync() {}
 
 /* ----------- Valve -----------*/
 
-void setValveOpening(int degrees) {}
-
 int getValveOpening() {}
 
-/* --------------- Tank State Setters --------------*/
+void Valve::setValveOpening(int degrees) {
+    this->degrees = degrees;
+}
+
+/* ---------- CUS --------------*/
+WaterLevel Valve::getWaterLevel() {
+    /*
+     * Right now the water level is set manually to normal
+     * because we don't take information from the CUS yet.
+     * Once we can, we will set DEBUGGING to false, and get
+     * the info from CUS with the function getWaterLevel().
+    */
+    if (DEBUGGING) {
+        this->waterLevel = WaterLevel::NORMAL;
+    } else {
+        // Take info from CUS ! SOMEHOW
+    }
+}
+
+/* --------------- Tank State --------------*/
+
+//TODO: VVV implement below VVV
+/*
+TankMode Tank::getTankMode() {
+    return this->tankMode;
+}
+*/
 
 void Valve::setAutomatic() {
     this->automatic = true;

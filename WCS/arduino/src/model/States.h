@@ -10,5 +10,5 @@ enum class TankMode {MANUAL, AUTOMATIC, UNCONNECTED, NOT_AVAILABLE};
 if (L>L1 and L<L2) for more than T1 time -> Water channel is 50% open until L<L1
 if (L>L2) -> Water channel is 100% open ultil L<L2
 */
-enum class WaterLevel {HALF, FULL, OTHER}; //! Possibly change
+enum class WaterLevel {HALF, FULL, NORMAL}; //! Possibly change
 #endif

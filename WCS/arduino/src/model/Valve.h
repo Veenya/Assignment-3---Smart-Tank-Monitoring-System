@@ -29,8 +29,8 @@ class Valve {
 
     private:
         HWPlatform* pHW;
-        TankMode tankMode;
-        WaterLevel waterLevel; //!
+        TankMode tankMode; 
+        WaterLevel waterLevel; //! From CUS
         int degrees;
 
         // States
@@ -39,6 +39,11 @@ class Valve {
         bool manual;
         bool unconnected;
         bool not_available;
+
+        // HALF, FULL, NORMAL
+        bool half;
+        bool full;
+        bool normal;
 };
 
 #endif
