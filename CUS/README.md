@@ -1,3 +1,36 @@
+How to run it (CUS)
+
+From inside cus/:
+
+pip install -r requirements.txt
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+
+
+Open:
+
+http://127.0.0.1:8000/status
+
+http://127.0.0.1:8000/docs
+
+What you MUST change
+
+Set your Arduino serial port:
+
+Windows: set WCS_PORT=COM4 (or use VS Code env / .env)
+
+Linux: export WCS_PORT=/dev/ttyACM0
+
+If you tell me your OS + the port name you see, I’ll give you the exact command.
+
+If you want, next I can also generate a tiny DBS (index.html + app.js) that polls /status and lets you toggle mode + slider when MANUAL.
+
+
+
+
+
+
+
+
 # CUS - Control Unit Subsystem
 ## Backend/Server
 
