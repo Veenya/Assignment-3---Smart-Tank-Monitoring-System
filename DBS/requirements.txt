@@ -1,0 +1,5 @@
+Flask
+dash
+plotly
+requests
+json
