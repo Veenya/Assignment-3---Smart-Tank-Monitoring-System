@@ -1,25 +1,19 @@
-package main.java.org.mqttserver;
+package org.mqttserver;
 
-// Vert.x runtime used to run the HTTP server "verticle"
-//? What?
+
 import io.vertx.core.Vertx;
-// Manages talking to Arduino with Serial
-// TODO: do? Do the doing...
 import org.mqttserver.policy.ChannelControllerManager;
 import org.mqttserver.policy.ChannelControllerManagerImpl;
-// Enum representing the system status.
 import org.mqttserver.presentation.Status;
-// The HTTP API service (GET system data, POST commands from dashboard)
 import org.mqttserver.services.HTTP.DataService;
-// MQTT srever/broker
 import org.mqttserver.services.MQTT.Broker;
 import org.mqttserver.services.MQTT.BrokerImpl;
 
+
 public class Main {
     public static void main(String[] args) throws Exception {
-        // TODO: change
         System.out.println("Welcome in Smart River Monitoring Server...");
-        // Creates MQTT broker object
+        //start the broker (MQTTServer)
         Broker broker = new BrokerImpl();
         broker.initialize(broker.getMqttServer());
 
