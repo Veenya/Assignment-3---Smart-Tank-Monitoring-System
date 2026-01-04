@@ -1,5 +1,10 @@
 package org.mqttserver;
-
+/*
+You might think the above package is wrong...
+Don't be fooled! It is correct.
+VS Code likes the one below, but it won't compile... Try it for yourself...
+*/
+//package main.java.org.mqttserver;
 
 import io.vertx.core.Vertx;
 import org.mqttserver.policy.ChannelControllerManager;
