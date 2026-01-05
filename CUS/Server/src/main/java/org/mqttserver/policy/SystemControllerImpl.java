@@ -83,33 +83,41 @@ public class SystemControllerImpl implements SystemController {
         if (this.status == Status.UNCONNECTED) {
             betweenStartMs = null; // Reset timer 
         }
-        
-        if (wl > INVALID_WL) {
-            // Set water level
-            this.wl = wl;
-
-            // PRIORITÀ 1: wl > L2 => valvola 100% immediata finché wl torna sotto/su L2
-            if (wl > L2) {
-                this.status = Status.ALARM;
-                this.valveValue = 100;
-                betweenStartMs = null; // Reset T1
-                System.out.println("SET SYSTEM STATUS: " + this.status.toString().toUpperCase());
-                //return;
-            } else if (wl > L1) {
-                if (betweenStartMs == null) {
-                    betweenStartMs = now;
-                }
-                if (now - betweenStartMs >= T1) {
-                    this.status = Status.PRE_ALARM;
-                    this.valveValue = 50;
-                } else {
-                    this.status = Status.NORMAL;
-                    this.valveValue = 0;
-                }
-
-            }
-        } else {
+     
+        if (wl <= INVALID_WL) {
             this.status = Status.INVALID_STATUS;
+            this.valveValue = 0;
+            this.betweenStartMs = null;
+            System.out.println("SET SYSTEM STATUS: " + this.status);
+            return;
+        }
+
+        // Set water level
+        this.wl = wl;
+
+        // PRIORITÀ 1: wl > L2 => valvola 100% immediata finché wl torna sotto/su L2
+        if (wl > L2) {
+            this.status = Status.ALARM;
+            this.valveValue = 100;
+            betweenStartMs = null; // Reset T1
+            System.out.println("SET SYSTEM STATUS: " + this.status.toString().toUpperCase());
+            //return;
+        } else if (wl > L1) {
+            if (betweenStartMs == null) {
+                betweenStartMs = now;
+            }
+            if (now - betweenStartMs >= T1) {
+                this.status = Status.PRE_ALARM;
+                this.valveValue = 50;
+            } else {
+                this.status = Status.NORMAL;
+                this.valveValue = 0;
+            }
+
+        } else {
+            this.status = Status.NORMAL;
+            this.valveValue = 0;
+            this.betweenStartMs = null;
         }
         System.out.println("SET SYSTEM STATUS: " + this.status.toString().toUpperCase());
     }
