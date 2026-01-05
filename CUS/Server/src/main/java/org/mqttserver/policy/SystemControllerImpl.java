@@ -10,41 +10,45 @@ import org.mqttserver.services.MQTT.Broker;
 import java.util.HashMap;
 import java.util.Map;
 
+
+// TODO: Put new policy to determin state based on water level, valve percentage, and frequencies
+//! This file is very important, careful!
 public class SystemControllerImpl implements SystemController {
 
-    private final double WL1 = 5;
-    private final double WL2 = 20;
-    private final double WL3 = 25;
-    private final double WL4 = 28;
-    private final double INVALID_WL = -1;
-    private final int F1 = 6000; //1800ms
-    private final int F2 = 2000; //1000ms
-    private final int F0 = 0;
+    private final double L1 = 5;  //? For our project we only
+    private final double L2 = 20; //? need these two
+
+    private final double INVALID_WL = -1; 
+    // Frequenze associate agli stati
+    private final int T0 = 0;
+    private final int T1 = 6000; //1800ms
+    private final int T2 = 12000;
+
     private Status status = null;
     private int valveValue = 0;
     private float wl = 0;
     private boolean isManual = false;
     private int frequency = 1;
     private final int V0= 0;
-    private final int V1= 25;
-    private final int V2= 40;
-    private final int V3= 50;
-    private final int V4 = 100;
+    private final int V1= 50;
+    private final int V2 = 100;
 
+    private long lastWlRxTimeMs = System.currentTimeMillis(); // ultimo wl ricevuto
+    private Long betweenStartMs = null; // quando wl è entrato in (L1, L2)
+
+    // TODO: Redo...
     private final Map<Status, Integer> statusValveValue = new HashMap<Status, Integer>() {{
-        put(Status.ALARM_TOO_LOW, V0);
-        put(Status.NORMAL, V1);
-        put(Status.PRE_ALARM_TOO_HIGH, V2);
-        put(Status.ALARM_TOO_HIGH, V3);
-        put(Status.ALARM_TOO_HIGH_CRITIC, V4);
+        put(Status.NORMAL, V0);
+        put(Status.PRE_ALARM, V1);
+        put(Status.ALARM, V2);
     }};
+    // TODO: Redo...
     private final Map<Status, Integer> statusFreq = new HashMap<Status, Integer>() {{
-        put(Status.ALARM_TOO_LOW, F2);
-        put(Status.NORMAL, F1);
-        put(Status.PRE_ALARM_TOO_HIGH, F2);
-        put(Status.ALARM_TOO_HIGH, F2);
-        put(Status.ALARM_TOO_HIGH_CRITIC, F2);
-        put(Status.INVALID_STATUS, F0);
+        put(Status.NORMAL, T0);
+        put(Status.PRE_ALARM, T1);
+        put(Status.ALARM, T0);
+        put(Status.UNCONNECTED, T2);
+        put(Status.INVALID_STATUS, T0);
     }};
 
 
@@ -52,31 +56,72 @@ public class SystemControllerImpl implements SystemController {
 
     }
 
+    /*
+    setWL(wl)
+
+    Quando arriva un valore di livello acqua:
+        1) Stampa il valore
+        2) Se non e' valido (wl > -1)
+            - salva this.wl = wl
+            - calcola this.status con gli if/else sulle soglie
+            - calcola this.frequency = statusFreq.get(status)
+        3) Se invalido -> status = INVALID_STATUS
+        4) Stampa lo stato
+    */
+
     @Override
     public void setWL(float wl) {
+        long now = System.currentTimeMillis();
+        // Arriva un dato => aggiorna "ultimo dato ricevuto"
+        lastWlRxTimeMs = now;
+
+        // Prints current water level
         System.out.println("WL RECEIVED VALUE: " + wl);
-        if (wl > INVALID_WL) { //INVALID WL = -1;
+
+        // Se era UNCONNECTED e ora arrivano dati, torna operativo
+        if (this.status == Status.UNCONNECTED) {
+            betweenStartMs = null; // Reset timer 
+        }
+        
+        if (wl > INVALID_WL) {
+            // Set water level
             this.wl = wl;
-            if (wl < WL1) {
-                this.status = Status.ALARM_TOO_LOW;
-            } else if (wl > WL1 && wl <= WL2) {
-                this.status = Status.NORMAL;
-            } else if (wl > WL2) {
-                if (wl > WL2 && wl <= WL3) {
-                    this.status = Status.PRE_ALARM_TOO_HIGH;
-                } else if (wl > WL3 && wl <= WL4) {
-                    this.status = Status.ALARM_TOO_HIGH;
+
+            // PRIORITÀ 1: wl > L2 => valvola 100% immediata finché wl torna sotto/su L2
+            if (wl > L2) {
+                this.status = Status.ALARM;
+                this.valveValue = 100;
+                betweenStartMs = null; // Reset T1
+                System.out.println("SET SYSTEM STATUS: " + this.status.toString().toUpperCase());
+                //return;
+            } else if (wl > L1) {
+                if (betweenStartMs == null) {
+                    betweenStartMs = now;
                 }
-            } else if (wl > WL4) {
-                this.status = Status.ALARM_TOO_HIGH_CRITIC;
+                if (now - betweenStartMs >= T1) {
+                    this.status = Status.PRE_ALARM;
+                    this.valveValue = 50;
+                } else {
+                    this.status = Status.NORMAL;
+                    this.valveValue = 0;
+                }
+
             }
-            this.frequency = this.statusFreq.get(this.status);
-            System.out.println("SET SYSTEM FREQ: " + this.frequency);
         } else {
             this.status = Status.INVALID_STATUS;
         }
         System.out.println("SET SYSTEM STATUS: " + this.status.toString().toUpperCase());
     }
+
+    public void tickConnection() {
+        long now = System.currentTimeMillis();
+        if (now - lastWlRxTimeMs > T2) {
+            this.status = Status.UNCONNECTED;
+            this.valveValue = 0;      // scelta safe
+            this.betweenStartMs = null;
+        }
+    }
+
 
     public Status getStatus() {
         if (this.status == null) {
@@ -110,6 +155,17 @@ public class SystemControllerImpl implements SystemController {
         this.valveValue = valveValue;
     }
 
+    /*
+    chekcValveValue(msg, broker)
+
+    Serve per "verificare" Arduino:
+        - legge il JSON arrivato da Arduino (MessageFromArduino)
+        - estrare valveValue
+        - confronta con il valore atteso per lo stato corrente
+            (expected = statusValveValue.get(currentStatus))
+        - se uguale: ok e aggiorna this.value
+        - se diverso: stampa errore
+    */
     @Override
     public void checkValveValue(String msg, Broker broker) {
         try {

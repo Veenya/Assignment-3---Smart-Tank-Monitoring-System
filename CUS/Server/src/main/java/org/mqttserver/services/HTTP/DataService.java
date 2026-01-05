@@ -19,12 +19,13 @@ public class DataService extends AbstractVerticle {
         this.broker = broker;
     }
 
+    // Creating HTTP server
     @Override
     public void start() {
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
-        router.post("/api/postdata").handler(this::handleAddNewData);
-        router.get("/api/systemdata").handler(this::handleGetData);
+        router.post("/api/postdata").handler(this::handleAddNewData);  // The exposed APIs are POST (sets valveValue, and puts the system in manual)
+        router.get("/api/systemdata").handler(this::handleGetData);    // and GET (returns status, valveValue, wl)
         vertx.createHttpServer().requestHandler(router).listen(port);
         System.out.println("Service ready on port: " + port);
     }
