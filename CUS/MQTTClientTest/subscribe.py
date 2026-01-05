@@ -1,3 +1,9 @@
+'''
+subscribe.py
+
+It listens on a topic and prints whatever it receives.
+'''
+
 import random
 
 from paho.mqtt import client as mqtt_client
@@ -18,7 +24,11 @@ def connect_mqtt() -> mqtt_client:
         else:
             print("Failed to connect, return code %d\n", rc)
 
-    client = mqtt_client.Client(client_id)
+    #client = mqtt_client.Client(client_id)
+    client = mqtt_client.Client(
+    mqtt_client.CallbackAPIVersion.VERSION1,
+    client_id=client_id
+    )
     # client.username_pw_set(username, password)
     client.on_connect = on_connect
     client.connect(broker, port)

@@ -1,3 +1,11 @@
+'''
+publish.py
+
+It pretends to be a sensor that periodically measures something (here: “FREQ”) and sends it over MQTT.
+Every few seconds, generate a random frequency value and broadcast it on a topic.
+
+'''
+
 import random
 import time
 
@@ -5,7 +13,7 @@ from paho.mqtt import client as mqtt_client
 
 broker = 'localhost'
 port = 1883
-topic = "/sensor/freq"
+topic = "sensor/freq"
 # Generate a Client ID with the publish prefix.
 client_id = f'publish-{random.randint(0, 1000)}'
 # username = 'emqx'
@@ -18,7 +26,11 @@ def connect_mqtt():
         else:
             print("Failed to connect, return code %d\n", rc)
 
-    client = mqtt_client.Client(client_id)
+    #client = mqtt_client.Client(client_id)
+    client = mqtt_client.Client(
+    mqtt_client.CallbackAPIVersion.VERSION1,
+    client_id=client_id
+    )
     # client.username_pw_set(username, password)
     client.on_connect = on_connect
     client.connect(broker, port)
