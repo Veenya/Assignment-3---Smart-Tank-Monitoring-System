@@ -32,7 +32,7 @@ public class Main {
 
         while (true) {
             if (!broker.getSystemController().getIsManual()) {
-                channelControllerManager.sendMessageToArduino(Status.ALARM_TOO_HIGH); //I send the message to arduino with state
+                channelControllerManager.sendMessageToArduino(Status.ALARM); //I send the message to arduino with state
                 String msg = channelControllerManager.receiveDataFromArduino(); //I receive the answer from arduino
                 broker.getSystemController().checkValveValue(msg, broker); //check valve value
             } else {

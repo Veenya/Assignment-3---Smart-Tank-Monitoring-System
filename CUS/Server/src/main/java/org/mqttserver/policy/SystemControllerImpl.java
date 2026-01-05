@@ -12,6 +12,7 @@ import java.util.Map;
 
 
 // TODO: Put new policy to determin state based on water level, valve percentage, and frequencies
+// TODO: Check if correct, it might be wrong...
 //! This file is very important, careful!
 public class SystemControllerImpl implements SystemController {
 
